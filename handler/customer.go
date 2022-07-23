@@ -2,7 +2,6 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"hexagonal-architecture/service"
 	"net/http"
 	"strconv"
@@ -24,8 +23,7 @@ func NewCustomerHandler(customerService service.CustomerService) customerHandler
 func (h customerHandler) GetCustomers(w http.ResponseWriter, r *http.Request) {
 	customers, err := h.customerService.GetCustomers()
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintln(w, err)
+		handleError(w, err)
 		return
 	}
 
@@ -38,8 +36,7 @@ func (h customerHandler) GetCustomer(w http.ResponseWriter, r *http.Request) {
 
 	customer, err := h.customerService.GetCustomer(customerID)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintln(w, err)
+		handleError(w, err)
 		return
 	}
 
