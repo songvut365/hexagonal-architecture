@@ -2,7 +2,7 @@ package service
 
 import (
 	"database/sql"
-	"errors"
+	"hexagonal-architecture/errs"
 	"hexagonal-architecture/logs"
 	"hexagonal-architecture/repository"
 )
@@ -21,7 +21,7 @@ func (service *customerService) GetCustomers() ([]CustomerResponse, error) {
 	customers, err := service.customerRepository.GetAll()
 	if err != nil {
 		logs.Error(err.Error())
-		return nil, err
+		return nil, errs.NewUnexpectedError()
 	}
 
 	customerResponses := []CustomerResponse{}
@@ -42,11 +42,11 @@ func (service *customerService) GetCustomer(id int) (*CustomerResponse, error) {
 	customer, err := service.customerRepository.GetById(id)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, errors.New("customer not found")
+			return nil, errs.NewNotFoundError("customer not found")
 		}
 
 		logs.Error(err)
-		return nil, err
+		return nil, errs.NewUnexpectedError()
 	}
 
 	customerResponse := CustomerResponse{
