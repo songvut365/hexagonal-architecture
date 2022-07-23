@@ -16,7 +16,7 @@ func InitDatabase() *sqlx.DB {
 		viper.GetString("db.password"),
 		viper.GetString("db.host"),
 		viper.GetInt("db.port"),
-		viper.GetString("db.datbase"),
+		viper.GetString("db.database"),
 	)
 
 	db, err := sqlx.Open(driver, dsn)
