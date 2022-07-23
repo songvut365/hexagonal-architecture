@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"hexagonal-architecture/config"
 	"hexagonal-architecture/handler"
+	"hexagonal-architecture/logs"
 	"hexagonal-architecture/repository"
 	"hexagonal-architecture/service"
-	"log"
 	"net/http"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -23,10 +23,10 @@ func main() {
 	// Repository
 	customerRepositoryMock := repository.NewCustomerRepositoryMock()
 	customerRepository := repository.NewCustomerRepositoryDB(db)
-	_ = customerRepository
+	_ = customerRepositoryMock
 
 	// Service
-	customerService := service.NewCustomerService(customerRepositoryMock)
+	customerService := service.NewCustomerService(customerRepository)
 
 	// Handler
 	customerHandler := handler.NewCustomerHandler(&customerService)
@@ -38,6 +38,6 @@ func main() {
 
 	// Run server
 	port := fmt.Sprintf(":%v", viper.GetInt("app.port"))
-	log.Printf("Server running at http://localhost%v", port)
+	logs.Info("Server running at http://localhost" + viper.GetString("app.port"))
 	http.ListenAndServe(port, router)
 }

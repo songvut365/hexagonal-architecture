@@ -3,8 +3,8 @@ package service
 import (
 	"database/sql"
 	"errors"
+	"hexagonal-architecture/logs"
 	"hexagonal-architecture/repository"
-	"log"
 )
 
 type customerService struct {
@@ -20,21 +20,21 @@ func NewCustomerService(customerRepository repository.CustomerRepository) custom
 func (service *customerService) GetCustomers() ([]CustomerResponse, error) {
 	customers, err := service.customerRepository.GetAll()
 	if err != nil {
-		log.Println(err)
+		logs.Error(err.Error())
 		return nil, err
 	}
 
-	customerReponses := []CustomerResponse{}
+	customerResponses := []CustomerResponse{}
 	for _, customer := range customers {
-		customerReponse := CustomerResponse{
+		customerResponse := CustomerResponse{
 			CustomerID: customer.CustomerID,
 			Name:       customer.Name,
 			Status:     customer.Status,
 		}
-		customerReponses = append(customerReponses, customerReponse)
+		customerResponses = append(customerResponses, customerResponse)
 	}
 
-	return customerReponses, nil
+	return customerResponses, nil
 }
 
 // Get customer by ID
@@ -45,7 +45,7 @@ func (service *customerService) GetCustomer(id int) (*CustomerResponse, error) {
 			return nil, errors.New("customer not found")
 		}
 
-		log.Println(err)
+		logs.Error(err)
 		return nil, err
 	}
 
